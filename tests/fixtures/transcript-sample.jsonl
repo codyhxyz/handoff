@@ -1,4 +1,4 @@
 {"type":"user","message":{"role":"user","content":[{"type":"text","text":"Open the PR for me"}]}}
-{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"I'll open the PR.\nTASK: Review the auth middleware diff."},{"type":"tool_use","id":"toolu_ABC","name":"Bash","input":{"command":"open https://github.com/foo/bar/pull/1"}}]}}
+{"type":"assistant","uuid":"asst-uuid-1","message":{"role":"assistant","content":[{"type":"text","text":"I'll open the PR.\nTASK: Review the auth middleware diff."},{"type":"tool_use","id":"toolu_ABC","name":"Bash","input":{"command":"open https://github.com/foo/bar/pull/1"}},{"type":"tool_use","id":"toolu_ABC_SIB","name":"Bash","input":{"command":"open https://github.com/foo/bar/pull/2"}}]}}
 {"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_ABC","content":"ok"}]}}
-{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"No TASK line this time."},{"type":"tool_use","id":"toolu_XYZ","name":"Bash","input":{"command":"open https://example.com/"}}]}}
+{"type":"assistant","uuid":"asst-uuid-2","message":{"role":"assistant","content":[{"type":"text","text":"No TASK line this time."},{"type":"tool_use","id":"toolu_XYZ","name":"Bash","input":{"command":"open https://example.com/"}}]}}

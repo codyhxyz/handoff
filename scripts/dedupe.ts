@@ -21,15 +21,29 @@ export function getOrSetGroupTask(
   candidate: string,
   opts: DedupeOpts = {},
 ): string {
-  const dir = opts.dir ?? tmpdir();
-  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  const key = `handoff-${sanitize(sessionId)}-${sanitize(parentMessageId)}`;
-  const file = join(dir, key);
+  const file = slotPath(sessionId, parentMessageId, opts);
   if (existsSync(file)) {
     return readFileSync(file, 'utf-8');
   }
   writeFileSync(file, candidate);
   return candidate;
+}
+
+/** Pure read — returns null if no sibling has written to this slot yet. */
+export function getGroupTask(
+  sessionId: string,
+  parentMessageId: string,
+  opts: DedupeOpts = {},
+): string | null {
+  const file = slotPath(sessionId, parentMessageId, opts);
+  return existsSync(file) ? readFileSync(file, 'utf-8') : null;
+}
+
+function slotPath(sessionId: string, parentMessageId: string, opts: DedupeOpts): string {
+  const dir = opts.dir ?? tmpdir();
+  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+  const key = `handoff-${sanitize(sessionId)}-${sanitize(parentMessageId)}`;
+  return join(dir, key);
 }
 
 function sanitize(s: string): string {

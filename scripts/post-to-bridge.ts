@@ -9,7 +9,8 @@ import { spawn } from 'node:child_process';
 
 const BRIDGE_URL = 'http://localhost:7717';
 const POST_PATH = '/pending-notes';
-const SPAWN_DELAY_MS = 800;
+const POLL_INTERVAL_MS = 100;
+const POLL_CEILING_MS = 1500;
 
 export interface PendingNotePayload {
   url: string;
@@ -21,8 +22,12 @@ export interface PendingNotePayload {
 export async function postPendingNote(payload: PendingNotePayload): Promise<boolean> {
   if (await tryPost(payload)) return true;
   spawnAnnServe();
-  await sleep(SPAWN_DELAY_MS);
-  return tryPost(payload);
+  const deadline = Date.now() + POLL_CEILING_MS;
+  while (Date.now() < deadline) {
+    await sleep(POLL_INTERVAL_MS);
+    if (await tryPost(payload)) return true;
+  }
+  return false;
 }
 
 async function tryPost(payload: PendingNotePayload): Promise<boolean> {

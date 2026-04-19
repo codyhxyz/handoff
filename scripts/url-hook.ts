@@ -13,7 +13,7 @@
 
 import { findPrecedingText } from './transcript.ts';
 import { extractTask } from './extract-task.ts';
-import { getOrSetGroupTask } from './dedupe.ts';
+import { getOrSetGroupTask, getGroupTask } from './dedupe.ts';
 import { postPendingNote } from './post-to-bridge.ts';
 import { readFileSync } from 'node:fs';
 
@@ -37,13 +37,17 @@ async function main(): Promise<void> {
   const sessionId = input.session_id ?? 'unknown-session';
   if (!transcriptPath || !toolUseId) return exit(0);
 
-  const precedingText = findPrecedingText(transcriptPath, toolUseId);
-  const taskFromText = extractTask(precedingText);
+  const preceding = findPrecedingText(transcriptPath, toolUseId);
+  const taskFromText = extractTask(preceding?.text ?? null);
+  const parentMessageId = preceding?.assistantUuid ?? toolUseId;
 
-  const parentMessageId = findParentMessageId(transcriptPath, toolUseId) ?? toolUseId;
+  // If this sibling found a TASK line, write-if-absent so later siblings
+  // in the turn reuse it. Otherwise, pure-read to pick up what a prior
+  // sibling already cached. The pure read avoids poisoning the slot with
+  // a sentinel that would block a still-later sibling's TASK from winning.
   const taskText = taskFromText
     ? getOrSetGroupTask(sessionId, parentMessageId, taskFromText)
-    : tryLoadCachedTask(sessionId, parentMessageId);
+    : getGroupTask(sessionId, parentMessageId);
 
   if (!taskText) return exit(0);  // no TASK preamble, no note
 
@@ -91,23 +95,6 @@ function extractUrlsFromBashCommand(cmd: string): string[] {
     urls.push(unquoted);
   }
   return urls;
-}
-
-function findParentMessageId(_transcriptPath: string, toolUseId: string): string | null {
-  // v0: use toolUseId itself as the dedupe key root. Sibling tool_use blocks
-  // inside the same assistant turn will each have distinct toolUseIds, so
-  // dedupe is only partial in v0. Full parent-message-uuid extraction is a
-  // v0.1 improvement once we confirm it is available in the JSONL schema.
-  return toolUseId;
-}
-
-function tryLoadCachedTask(sessionId: string, parentMessageId: string): string | null {
-  // If a prior sibling in this turn cached a task, reuse it even when this
-  // call's preceding text didn't include TASK: directly. In v0 this is a
-  // no-op because findParentMessageId uses the per-call toolUseId — siblings
-  // won't share a key. Placeholder for v0.1 parent-message-uuid wiring.
-  const cached = getOrSetGroupTask(sessionId, parentMessageId, '__SENTINEL__');
-  return cached === '__SENTINEL__' ? null : cached;
 }
 
 function exit(code: number): void {

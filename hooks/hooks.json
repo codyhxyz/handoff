@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "tsx ${PLUGIN_DIR}/scripts/url-hook.ts"
+            "command": "sh ${PLUGIN_DIR}/scripts/url-hook-prefilter.sh"
           }
         ]
       }
