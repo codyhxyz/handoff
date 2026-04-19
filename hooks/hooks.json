@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "tsx ${PLUGIN_DIR}/scripts/url-hook.ts"
+          }
+        ]
+      }
+    ]
+  }
+}

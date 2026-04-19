@@ -1,0 +1,7 @@
+{
+  "name": "handoff",
+  "version": "0.1.0",
+  "description": "Drops task-context sticky notes on pages Claude opens for you. Requires the Web Annotator browser extension.",
+  "author": "Cody Hergenroeder",
+  "license": "MIT"
+}
