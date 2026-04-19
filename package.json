@@ -1,0 +1,16 @@
+{
+  "name": "handoff",
+  "version": "0.1.0",
+  "description": "Claude Code plugin: drops task-context sticky notes on pages Claude opens for the user (via Web Annotator extension)",
+  "type": "module",
+  "bin": { "handoff-hook": "./scripts/url-hook.ts" },
+  "scripts": {
+    "test": "tsx --test tests/**/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "~5.7.2"
+  }
+}
