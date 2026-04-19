@@ -20,9 +20,20 @@ Prerequisites:
 - Web Annotator extension installed in your browser
 - `ann` CLI on `PATH` (from the annotator-extension's `cli/`) — the plugin will auto-spawn `ann serve` the first time a hook fires if the port is free
 
-Install the plugin:
+### From the codyhxyz marketplace (recommended)
+
+In Claude Code:
+```
+/plugin marketplace add codyhxyz/codyhxyz-plugins
+/plugin install handoff
+```
+
+Restart Claude Code so the hook registers.
+
+### Manual clone (fallback)
+
 ```bash
-git clone <this-repo-url> ~/.claude/plugins/handoff
+git clone https://github.com/codyhxyz/handoff ~/.claude/plugins/handoff
 cd ~/.claude/plugins/handoff
 pnpm install
 ```
